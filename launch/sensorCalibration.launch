@@ -1,0 +1,12 @@
+<launch>
+
+	<node pkg="rosserial_arduino" type="serial_node.py" name="serial_node" output="screen">
+		<param name="port" value="/dev/ttyACM0"/>
+		<param name="baud" value="115200"/>
+	</node>
+
+	<arg name="calibration" default="2" />
+    <param name="calibration_mode" type="int" value="$(arg calibration)" />
+
+	<node name="imu" pkg="plymouth2020" type="imu.py" respawn="true" output='screen' />
+</launch>
