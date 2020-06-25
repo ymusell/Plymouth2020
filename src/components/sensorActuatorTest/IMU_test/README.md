@@ -26,4 +26,4 @@ And after,
 You can see if the new calibration of your magnetometer is good by changing the value of the offset in the magnetometerValueUnCalibrated.py.  
 And run:  
 
-    python3 magnetometerValueUnCalibrated.py
+    python2.7 magnetometerValueUnCalibrated.py
