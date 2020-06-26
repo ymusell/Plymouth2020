@@ -5,5 +5,11 @@
 		<param name="baud" value="115200"/>
 	</node>
 
+	<arg name="calibration" default="2" />
+	<param name="calibration_mode" type="int" value="$(arg calibration)" />
+
 	<node pkg="plymouth2020" type="gps.py" name="gps" />
+
+	<node name="imu" pkg="plymouth2020" type="imu.py" respawn="true" output='screen' />
+	<node name="filter_wind" pkg="plymouth2020" type="filter_wind.py" respawn="true" output='screen' />
 </launch>

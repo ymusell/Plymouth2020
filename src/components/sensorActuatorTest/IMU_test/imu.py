@@ -121,7 +121,7 @@ class Imu_9dof():
 
 	def calibration_magnetometer(self,number_of_sec=60):
 		"""
-		Return the offset of the magnetometer
+		Return the offset of the magnetometer or all the data to compute on another program
 		"""
 		rospy.loginfo("\tMagnetometer calibration begins")
 		rospy.loginfo("\t\tPlease rotate the imu in many direction to cover the entire 3D rotations")
@@ -181,7 +181,7 @@ class Imu_9dof():
 			offset = self.get_previous_calibration()
 		if your_calibration == 2: # previous calibration with the all calibrationof the magnetometer
 			offset = self.get_previous_calibration()
-			offset[6]=-0.624667
+			offset[6]=-0.624667 #Change of the values of the magnetometer offset
 			offset[7]=-2.099800
 			offset[8]=23.159913
 		else: # no calibration
@@ -211,7 +211,7 @@ class Imu_9dof():
 
 	def H(self,x):
 		x1,x2 = x[0,0],x[1,0]
-		mat = np.array([[1,0,0],[0,1,0],[2*x1,2*x2,0]])
+		mat = np.array([[1,0,0],[0,1,0],[2*x1,2*x2,1]])
 		return mat
 
 	def init_ekf(self):
@@ -297,7 +297,7 @@ if __name__ == '__main__':
 	imu = Imu_9dof("ardu_send_imu", "ardu_send_mag","filter_send_euler_angles")
 	imu.offset = imu.get_calibration(mode)
 	imu.init_ekf()
-	th = 0
+	# th = 0
 	rospy.loginfo("[{}] Waiting data from Arduino".format(node_name))
 	while (imu.vect_temps[2] > 1 or imu.vect_temps[2] == 0) and not rospy.is_shutdown():
 		rospy.sleep(0.5)
