@@ -3,15 +3,18 @@
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-#define SERVOMIN  160 // This is the 'minimum' pulse length count (out of 4096), after some tries the value for SERVOMIN for an angle of 0 degree is 160  
-#define SERVOMAX  470 // This is the 'maximum' pulse length count (out of 4096),and th emaw value for SERVOMAX is 470
+// For the rudder
+#define SERVOMINRUDDER  160 // This is the 'minimum' pulse length count (out of 4096), after some tries the value for SERVOMIN for an angle of 0 degree is 160  
+#define SERVOMAXRUDDER  425 // This is the 'maximum' pulse length count (out of 4096),and the maw value for SERVOMAX is 470
+
+
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
 uint8_t servonum = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Test for the first channe servo!");
+  Serial.println("Test for the first channel servo!");
 
   pwm.begin();
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
@@ -44,23 +47,29 @@ void loop() {
 //  servonum++; // If you want to test the first 8 servo channels
 //  if (servonum > 7) servonum = 0; 
 */
-  // Validation of the values found
+
+  // Validation of the values found for the rudder
   Serial.println("O deg");
-  pwm.setPWM(servonum, 0, pulseWidth(0));
+  pwm.setPWM(servonum, 0, pulseWidthRudder(-PI/4));
   delay(2000);
   Serial.println("9O deg");
-  pwm.setPWM(servonum, 0, pulseWidth(90));
+  pwm.setPWM(servonum, 0, pulseWidthRudder(0));
   delay(2000);
   Serial.println("18O deg");
-  pwm.setPWM(servonum, 0, pulseWidth(180));
+  pwm.setPWM(servonum, 0, pulseWidthRudder(PI/4));
   delay(2000);
 
 }
 
+double mapf(double val, double in_min, double in_max, double out_min, double out_max) {
+    return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
-int pulseWidth(int angle)
+int pulseWidthRudder(double angle) //The angle is in rad
 {
-  int pulse_wide, analog_value;
-  pulse_wide   = map(angle, 0, 180, SERVOMIN, SERVOMAX);
+  int pulse_wide;
+  Serial.println(angle);
+  pulse_wide   = mapf(angle,-PI/2,PI/2,SERVOMINRUDDER,SERVOMAXRUDDER);
+  Serial.println(pulse_wide);
   return pulse_wide;
 }

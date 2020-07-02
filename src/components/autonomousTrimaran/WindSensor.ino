@@ -25,6 +25,11 @@ void updateWind(){
 void publishWind(){
   windMsg.data = angleWind;
   pubWind.publish(&windMsg);
+  char text[] = "la valeurde checkWindSpeed est de";
+  char result[8];
+  dtostrf(checkWindSpeed, 6, 2, result); 
+  nh.loginfo(text);
+  nh.loginfo(result);
   if (checkWindSpeed == 1){
     checkWindSpeed = 0;
     publishWindSpeed();
@@ -62,6 +67,7 @@ void anemoInterrupt(){
 */
 
 void anemoInterrupt(){
+  nh.loginfo("interrupt");
   if (validWind == 1){
     t1 = millis();
     windSpeed =  2.0*3.14*(1000.0/ (double(t1-t0)) )*0.055*3; 

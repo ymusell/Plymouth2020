@@ -24,16 +24,20 @@ ros::Subscriber<std_msgs::Float32> sailSub("mode_send_u_sail", &sailCallBack );
 #define ACTUATOR_RUDDER    0
 #define ACTUATOR_SAIL    1
 
-/****************Configuration*******************/   //TODO à changer, nouvelles valeurs
+/****************Configuration*******************/   
 #define MIN_PULSE_WIDTH       160 //650
-#define MAX_PULSE_WIDTH       470 //2350
+#define MAX_PULSE_WIDTH       425 //2350
 //#define DEFAULT_PULSE_WIDTH   1500
 #define FREQUENCY             50
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-float rudderAngle =75;
-float maxRudderAngle = 120;
-float minRudderAngle = 30;
+
+#define SERVOMINRUDDER  160 
+#define SERVOMAXRUDDER  425
+
+float rudderAngle = 293;
+//float maxRudderAngle = 120;
+//float minRudderAngle = 30;
 
 float sailAngle = 22;
 float maxSailAngle = 55;

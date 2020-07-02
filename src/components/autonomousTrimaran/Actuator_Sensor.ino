@@ -22,12 +22,10 @@ void setupSensor(){
   //setupImuCmps();
   //setupRC();
   setupWind();
-  //setupGps();
-}
+ }
 
 
 void updateSensor(){
-  //updateGps();
   updateImu();
   //updateImuCmps();
   //updateRC();
