@@ -16,6 +16,8 @@ int vaneDirection; // translated 0 - 360 wind direction
 int calDirection; // calibrated direction after offset applied
 int lastDirValue; // last recorded direction value
 
+int val = 0;
+
 void setup() {
 
   // setup anemometer values
@@ -28,7 +30,7 @@ void setup() {
   
   Serial.begin(9600);
   Serial.println("Davis Sensor Test");
-  Serial.println("tSpeed\tDirection");
+  Serial.println("Speed Direction");
 
   pinMode(WindSensor_Pin, INPUT);
   attachInterrupt(digitalPinToInterrupt(WindSensor_Pin), isr_rotation, FALLING);
@@ -41,15 +43,17 @@ void setup() {
 }
 
   void loop() {
-  if(isSampleRequired) {
-  
-    getWindDirection();
-
-    Serial.print(windSpeed); Serial.print(" mph\t");
-    Serial.print(calDirection); Serial.println("*");
-    
-    isSampleRequired = false;
-  }
+    val = digitalRead(WindSensor_Pin);
+    Serial.println(val);
+//  if(isSampleRequired) {
+//  
+//    getWindDirection();
+//
+//    Serial.print(windSpeed); Serial.print(" mph\t");
+//    Serial.print(calDirection); Serial.println("*");
+//    
+//    isSampleRequired = false;
+//  }
 }
 
 // Interrupt handler routine for timer interrupt

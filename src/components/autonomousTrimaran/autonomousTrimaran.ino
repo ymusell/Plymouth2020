@@ -12,8 +12,7 @@ ros::NodeHandle nh;
 
 // configuration for the sensors
 
-#include "ConfigIMU.h"
-#include "ConfigImuCmps12.h"  //Change the good IMU      
+#include "ConfigIMU.h"     
 #include "ConfigWind.h"
 
 

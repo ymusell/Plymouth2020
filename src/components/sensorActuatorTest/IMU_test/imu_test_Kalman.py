@@ -29,7 +29,9 @@ class Imu_9dof():
 		self.vect_temps = np.zeros(3)
 		self.get = 0
 		self.yaw, self.pitch, self.roll = 1,1,1
+		self.yaw_2, self.pitch_2, self.roll_2 = 1,1,1
 		self.pub_send_euler_angles = rospy.Publisher(pubName_euler_angles, Vector3, queue_size=10)
+		self.pub_send_euler_angles_2 = rospy.Publisher(pubName_euler_angles+"_2", Vector3, queue_size=10)
 		self.lp = None
 		self.vect_lp = np.zeros((9,1))
 
@@ -195,23 +197,23 @@ class Imu_9dof():
 
 	def f(self,x,u):
 		dt = self.vect_temps[2]	
-		mat = np.array([[1,-dt*u],[dt*u,1]])
+		mat = np.array([[1,-dt*u,0],[dt*u,1,0],[0,0,1]])
 		mat = np.matmul(mat,x)
 		return mat
 
 	def F(self,x,u):
 		dt = self.vect_temps[2]
-		mat = np.array([[1,-dt*u],[dt*u,1]])
+		mat = np.array([[1,-dt*u,0],[dt*u,1,0],[0,0,1]])
 		return mat
 
 	def h(self,x):
 		x1,x2 = x[0,0],x[1,0]
-		mat = np.array([[x1],[x2]])
+		mat = np.array([[x1],[x2],[x1**2+x2**2]])
 		return mat
 
 	def H(self,x):
 		x1,x2 = x[0,0],x[1,0]
-		mat = np.array([[1,0],[0,1]])
+		mat = np.array([[1,0,0],[0,1,0],[2*x1,2*x2,1]])
 		return mat
 
 	def init_ekf(self):
@@ -219,26 +221,80 @@ class Imu_9dof():
 		Q = 0.028**2*np.eye(3)#0.028
 		R = 0.01*np.eye(3)
 
-		self.ekf_yaw   = Extended_kalman_filter(np.zeros((2,1)),P0,self.f,self.F,self.h,self.H,Q,R)
-		self.ekf_pitch = Extended_kalman_filter(np.zeros((2,1)),P0,self.f,self.F,self.h,self.H,Q,R)
-		self.ekf_roll  = Extended_kalman_filter(np.zeros((2,1)),P0,self.f,self.F,self.h,self.H,Q,R)
+		self.ekf_yaw   = Extended_kalman_filter(np.zeros((3,1)),P0,self.f,self.F,self.h,self.H,Q,R)
+		self.ekf_pitch = Extended_kalman_filter(np.zeros((3,1)),P0,self.f,self.F,self.h,self.H,Q,R)
+		self.ekf_roll  = Extended_kalman_filter(np.zeros((3,1)),P0,self.f,self.F,self.h,self.H,Q,R)
 
 	def kalman_compute(self):
 		angles = self.get_angles()
 		dt = self.vect_temps[2]
+		f_kalman_time.write('{}\n'.format(dt))
 
-		z = np.array([[np.cos(angles[0])],[np.sin(angles[0])]])
+		z = np.array([[np.cos(angles[0])],[np.sin(angles[0])],[1]])
 		[x,P] = self.ekf_yaw.EKF_step(self.vect_lp[5,0],z)
 		self.yaw = np.arctan2(x[1,0],x[0,0])
 
-		z = np.array([[np.cos(angles[1])],[np.sin(angles[1])]])
+		z = np.array([[np.cos(angles[1])],[np.sin(angles[1])],[1]])
 		[x,P] = self.ekf_pitch.EKF_step(-self.vect_lp[3,0],z)
-		self.pitch = np.arctan2(x[1,0],x[0,0])
+		self.pitch = np.arctan2(x[1,0],x[0,0])-0.018
+
+		z = np.array([[np.cos(angles[2])],[np.sin(angles[2])],[1]])
+		[x,P] = self.ekf_roll.EKF_step(-self.vect_lp[4,0],z)
+		self.roll = np.arctan2(x[1,0],x[0,0])+0.008
+
+		#Saving of all the first values
+		f_kalman.write('{} {} {}\n'.format(self.yaw,self.pitch,self.roll))
+		return angles
+############ Second filter ###############
+
+	def f2(self,x,u):
+		dt = self.vect_temps[2]	
+		mat = np.array([[1,-dt*u],[dt*u,1]])
+		mat = np.matmul(mat,x)
+		return mat
+
+	def F2(self,x,u):
+		dt = self.vect_temps[2]
+		mat = np.array([[1,-dt*u],[dt*u,1]])
+		return mat
+
+	def h2(self,x):
+		x1,x2 = x[0,0],x[1,0]
+		mat = np.array([[x1],[x2]])
+		return mat
+
+	def H2(self,x):
+		x1,x2 = x[0,0],x[1,0]
+		mat = np.array([[1,0],[0,1]])
+		return mat
+
+	def init_ekf_2(self):
+		P0 = 10*np.eye(2)
+		Q = 0.028**2*np.eye(2)#0.028
+		R = 0.01*np.eye(2)
+
+		self.ekf_yaw_2   = Extended_kalman_filter(np.zeros((2,1)),P0,self.f2,self.F2,self.h2,self.H2,Q,R)
+		self.ekf_pitch_2 = Extended_kalman_filter(np.zeros((2,1)),P0,self.f2,self.F2,self.h2,self.H2,Q,R)
+		self.ekf_roll_2  = Extended_kalman_filter(np.zeros((2,1)),P0,self.f2,self.F2,self.h2,self.H2,Q,R)
+
+	def kalman_compute_2(self,angles):
+		angles = self.get_angles_2()
+		dt = self.vect_temps[2]
+
+		z = np.array([[np.cos(angles[0])],[np.sin(angles[0])]])
+		[x,P] = self.ekf_yaw_2.EKF_step(self.vect_lp[5,0],z)
+		self.yaw_2 = np.arctan2(x[1,0],x[0,0])
+
+		z = np.array([[np.cos(angles[1])],[np.sin(angles[1])]])
+		[x,P] = self.ekf_pitch_2.EKF_step(-self.vect_lp[3,0],z)
+		self.pitch_2 = np.arctan2(x[1,0],x[0,0])		#-0.018
 
 		z = np.array([[np.cos(angles[2])],[np.sin(angles[2])]])
-		[x,P] = self.ekf_roll.EKF_step(-self.vect_lp[4,0],z)
-		self.roll = np.arctan2(x[1,0],x[0,0])
+		[x,P] = self.ekf_roll_2.EKF_step(-self.vect_lp[4,0],z)
+		self.roll_2 = np.arctan2(x[1,0],x[0,0])		#+0.008
 
+		#Saving of all the first values
+		f_kalman_2.write('{} {} {}\n'.format(self.yaw_2,self.pitch_2,self.roll_2))
 		#rospy.loginfo("[{}] {}".format(node_name,np.array([self.yaw,self.pitch,self.roll])*180/np.pi))
 		
 	###################################################################
@@ -255,7 +311,7 @@ class Imu_9dof():
 
 		# Complementary filter for the gyroscope and the accelerometer
 		if self.lp == None:
-			alpha = 0.7
+			alpha = 1.0
 			self.lp = Low_pass_filter(alpha,vect_corr)
 		else:
 			self.vect_lp = self.lp.low_pass_next(vect_corr)
@@ -265,12 +321,49 @@ class Imu_9dof():
 		mx,my,mz = -self.vect_lp[6,0],-self.vect_lp[7,0],self.vect_lp[8,0]	
 
 		# ----  Calcul des angles ------------------------------------------------------ #
-
 		if ax != 0 and ay != 0 and az != 0:
 			ax_norm = ax/np.sqrt(ax**2+ay**2+az**2)
 			ay_norm = ay/np.sqrt(ax**2+ay**2+az**2)
 		else:
 			ax_norm, ay_norm = 0 , 0
+
+		A_pitch = np.arcsin(ax_norm)
+		A_roll = -np.arcsin(ay_norm/np.cos(A_pitch))
+		Mx = mx*cos(A_pitch)+mz*sin(A_pitch)	
+		My = mx*sin(A_roll)*sin(A_pitch)+my*cos(A_roll)-mz*sin(A_roll)*cos(A_pitch)
+		G_yaw = np.arctan2(My,Mx)
+		dt = self.vect_temps[2]
+		#if gz > 0.01:
+		#	G_yaw =  G_yaw*0.5+0.5*(dt*gz+self.yaw)
+		return G_yaw,A_pitch,A_roll
+
+	# New values
+
+	def get_angles_2(self):
+		if (mode == 2):		#For the second calibration of the magnetometer
+			A = np.array([[1.013172,-0.000964,-0.006329],[-0.000964,1.024569,0.006336],[-0.006329,0.006336,0.974003]])
+			vect_corr = self.vect_agm + self.offset 
+			vect_corr [6:]=np.dot(A,vect_corr[6:])	#Correction of the values from the magnetometer
+		else:
+			vect_corr = self.vect_agm + self.offset 
+
+		if self.lp == None:
+			alpha = 0.7
+			self.lp = Low_pass_filter(alpha,vect_corr)
+		else:
+			self.vect_lp = self.lp.low_pass_next(vect_corr)
+
+		ax,ay,az = -self.vect_lp[1,0],-self.vect_lp[0,0],-self.vect_lp[2,0]
+		gx,gy,gz = self.vect_lp[4,0],self.vect_lp[3,0],self.vect_lp[5,0]
+		mx,my,mz = -self.vect_lp[6,0],-self.vect_lp[7,0],self.vect_lp[8,0]	
+
+		# ----  Calcul des angles ------------------------------------------------------ #
+		if ax != 0 and ay != 0 and az != 0:
+			ax_norm = ax/np.sqrt(ax**2+ay**2+az**2)
+			ay_norm = ay/np.sqrt(ax**2+ay**2+az**2)
+			az_norm = az/np.sqrt(ax**2+ay**2+az**2)		
+		else:
+			ax_norm, ay_norm, az_norm = 0 , 0, 0	
 
 		A_pitch = np.arctan2(ax,np.sqrt(ay**2+az**2))
 		A_roll = -np.arctan2(ay,np.sqrt(ax**2+az**2))
@@ -278,8 +371,6 @@ class Imu_9dof():
 		My = my*cos(A_roll)+mz*sin(A_roll)
 		G_yaw = np.arctan2(My,Mx)
 		dt = self.vect_temps[2]
-		#if gz > 0.01:
-		#	G_yaw =  G_yaw*0.5+0.5*(dt*gz+self.yaw)
 		return G_yaw,A_pitch,A_roll
 
 	def publish(self):
@@ -288,6 +379,13 @@ class Imu_9dof():
 		euler_angles_msg.y = self.pitch
 		euler_angles_msg.z = self.roll
 		self.pub_send_euler_angles.publish(euler_angles_msg)
+
+	def publish_2(self):
+		euler_angles_msg_2 = Vector3()
+		euler_angles_msg_2.x = self.yaw_2
+		euler_angles_msg_2.y = self.pitch_2
+		euler_angles_msg_2.z = self.roll_2
+		self.pub_send_euler_angles_2.publish(euler_angles_msg_2)
 
 
 
@@ -298,17 +396,30 @@ if __name__ == '__main__':
 	imu = Imu_9dof("ardu_send_imu", "ardu_send_mag","filter_send_euler_angles")
 	imu.offset = imu.get_calibration(mode)
 	imu.init_ekf()
-	# th = 0
+	imu.init_ekf_2()
 	rospy.loginfo("[{}] Waiting data from Arduino".format(node_name))
 	while (imu.vect_temps[2] > 1 or imu.vect_temps[2] == 0) and not rospy.is_shutdown():
 		rospy.sleep(0.5)
 	rospy.loginfo("[{}] Connected to Arduino, program starts".format(node_name))
+	rospy.loginfo("Start to try the Kalman filter")
+	#All the files to save the data to compare the Kalman filter
+	my_file_kalman = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KalmanTestValues/kalman_try_shape_3.txt')	
+	f_kalman = open(my_file_kalman,'w')
+	my_file_kalman_2 = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KalmanTestValues/kalman_try_shape_2.txt')	
+	f_kalman_2 = open(my_file_kalman_2,'w')
+	my_file_kalman_time = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KalmanTestValues/kalman_try_time.txt')	
+	f_kalman_time = open(my_file_kalman_time,'w')
 	while not rospy.is_shutdown():
 		t0 = time.time()
 		if imu.get == 1:
 			imu.get = 0
-			imu.kalman_compute()
+			angles = imu.kalman_compute()
+			imu.kalman_compute_2(angles)
 			imu.publish()
+			imu.publish_2()
 		t1 = time.time()
 		pause = imu.vect_temps[2]/2-(t1-t0)
 		rospy.sleep(pause)
+	f_kalman.close()
+	f_kalman_2.close()
+	f_kalman_time.close()

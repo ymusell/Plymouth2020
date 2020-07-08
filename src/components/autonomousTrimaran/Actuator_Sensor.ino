@@ -19,7 +19,6 @@ void Actuator(){
 
 void setupSensor(){
   setupImu();
-  //setupImuCmps();
   //setupRC();
   setupWind();
  }
@@ -27,7 +26,6 @@ void setupSensor(){
 
 void updateSensor(){
   updateImu();
-  //updateImuCmps();
   //updateRC();
   updateWind();
   

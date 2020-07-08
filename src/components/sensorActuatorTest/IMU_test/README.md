@@ -27,3 +27,10 @@ You can see if the new calibration of your magnetometer is good by changing the 
 And run:  
 
     python2.7 magnetometerValueUnCalibrated.py
+
+## Part of the Kalman filter  
+  
+    roslaunch Kalman_for_the_IMU.launch
+
+This launch use the programm `imu_test_Kalman.py` which create 3 files of the previous Kalman with 3 state vector with 3 components and the new one with 2 components. This files will be used in :
+ >/KalmanTestValues

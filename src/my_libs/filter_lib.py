@@ -40,7 +40,7 @@ class Kalman_filter():
 
 class Extended_kalman_filter():
 
-	def __init__(self,x0,P0,f,F,h,H,Q,R): # x0, Gx0,A,B,C Galpha, Gbeta
+	def __init__(self,x0,P0,f,F,h,H,Q,R): # x0, Gx0,A,B,C, Galpha, Gbeta
 		self.x = x0
 		self.P = P0
 		self.f = f
