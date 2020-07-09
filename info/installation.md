@@ -42,3 +42,10 @@
   -  In order to see if all the sensors work you can try all the .ino program in the file:
 
 >/plymouth2020/src/components/sensorActuatorTest/
+
+
+# Installation of python package
+
+For the utm reading part:
+
+    pip install utm 
