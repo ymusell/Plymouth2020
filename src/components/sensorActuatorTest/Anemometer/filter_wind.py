@@ -55,23 +55,23 @@ def sub_boat_speed(data): #GPSFix
 
 def f(x,u):
 	dt = vect_temps[2]	
-	mat = np.array([[1,-dt*u,0],[dt*u,1,0],[0,0,1]])
+	mat = np.array([[1,-dt*u],[dt*u,1]])
 	mat = np.matmul(mat,x)
 	return mat
 
 def F(x,u):
 	dt = vect_temps[2]
-	mat = np.array([[1,-dt*u,0],[dt*u,1,0],[0,0,1]])
+	mat = np.array([[1,-dt*u],[dt*u,1]])
 	return mat
 
 def h(x):
 	x1,x2 = x[0,0],x[1,0]
-	mat = np.array([[x1],[x2],[x1**2+x2**2]])
+	mat = np.array([[x1],[x2]])
 	return mat
 
 def H(x):
 	x1,x2 = x[0,0],x[1,0]
-	mat = np.array([[1,0,0],[0,1,0],[2*x1,2*x2,1]])
+	mat = np.array([[1,0],[0,1]])
 	return mat
 
 ##############################################################################################
@@ -100,10 +100,10 @@ if __name__ == '__main__':
 
 	rospy.sleep(1)
 
-	P0 = 10*np.eye(3)
-	Q = 0.028**2*np.eye(3)#0.028
-	R = 0.01*np.eye(3)
-	EKF_yaw   = Extended_kalman_filter(np.zeros((3,1)),P0,f,F,h,H,Q,R)
+	P0 = 10*np.eye(2)
+	Q = 0.028**2*np.eye(2)#0.028
+	R = 0.01*np.eye(2)
+	EKF_yaw   = Extended_kalman_filter(np.zeros((2,1)),P0,f,F,h,H,Q,R)
 	
 
 	while not rospy.is_shutdown():
@@ -112,7 +112,7 @@ if __name__ == '__main__':
 		if get == 1: #each time we have a new value
 			get = 0
 			
-			z = np.array([[np.cos(vect_wind_direction[1])],[np.sin(vect_wind_direction[1])],[1]])
+			z = np.array([[np.cos(vect_wind_direction[1])],[np.sin(vect_wind_direction[1])]])
 			[x,P] = EKF_yaw.EKF_step(vect_wind_direction[2],z)
 			wind_direction = np.arctan2(x[1,0],x[0,0])
 
@@ -121,11 +121,16 @@ if __name__ == '__main__':
 			true_wind     = apparent_wind-boat_wind
 			true_wind     = np.arctan2(true_wind[1,0],true_wind[0,0])
 
-			wind_direction_msg.data = theta + wind_direction
+			true_wind_direction = theta + wind_direction
+			if (true_wind_direction > np.pi):
+				true_wind_direction = -np.pi + (true_wind_direction - np.pi)
+			if (true_wind_direction < -np.pi):
+				true_wind_direction = np.pi - (-np.pi - true_wind_direction )
+			wind_direction_msg.data = true_wind_direction
 			pub_send_wind_direction.publish(wind_direction_msg)
 			wind_speed_msg.data = wind_speed
 			pub_send_wind_speed.publish(wind_speed_msg)
-			rospy.loginfo("[{}] Wind direction : {}, Wind speed : {} ".format(node_name, true_wind, wind_speed))
+			# rospy.loginfo("[{}] Wind direction : {}, Wind speed : {} ".format(node_name, true_wind, wind_speed))
 
 		t1 = time.time()
 		pause = vect_temps[2]/2-(t1-t0)

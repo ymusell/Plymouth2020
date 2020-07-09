@@ -215,9 +215,9 @@ class Imu_9dof():
 		return mat
 
 	def init_ekf(self):
-		P0 = 10*np.eye(3)
-		Q = 0.028**2*np.eye(3)#0.028
-		R = 0.01*np.eye(3)
+		P0 = 10*np.eye(2)
+		Q = 0.028**2*np.eye(2)#0.028
+		R = 0.01*np.eye(2)
 
 		self.ekf_yaw   = Extended_kalman_filter(np.zeros((2,1)),P0,self.f,self.F,self.h,self.H,Q,R)
 		self.ekf_pitch = Extended_kalman_filter(np.zeros((2,1)),P0,self.f,self.F,self.h,self.H,Q,R)

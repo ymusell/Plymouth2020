@@ -43,17 +43,17 @@ void setup() {
 }
 
   void loop() {
-    val = digitalRead(WindSensor_Pin);
-    Serial.println(val);
-//  if(isSampleRequired) {
-//  
-//    getWindDirection();
-//
-//    Serial.print(windSpeed); Serial.print(" mph\t");
-//    Serial.print(calDirection); Serial.println("*");
-//    
-//    isSampleRequired = false;
-//  }
+//    val = digitalRead(WindSensor_Pin);
+//    Serial.println(val);
+  if(isSampleRequired) {
+  
+    getWindDirection();
+
+    Serial.print(windSpeed); Serial.print(" mph\t");
+    Serial.print(calDirection); Serial.println("*");
+    
+    isSampleRequired = false;
+  }
 }
 
 // Interrupt handler routine for timer interrupt
@@ -71,7 +71,7 @@ void setup() {
 
 // Interrupt handler routine to increment the rotation count for wind speed
 void isr_rotation() {
-  
+  Serial.println("Ici, je suis entre");
   if((millis() - contactBounceTime) > 15 ) { // debounce the switch contact
     rotations++;
     contactBounceTime = millis();
