@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     # --- Main ------------- #
     u = np.array([[0],[1.0]])
-    while lat_lon_origin == [[],[]]:
+    while lat_lon_origin == [[],[]]:    #Waiting of the starting point
         rospy.sleep(0.5)
         rospy.loginfo("[{}] Waiting GPS origin".format(node_name))
     rospy.loginfo("[{}] Got GPS origin {}".format(node_name,lat_lon_origin))

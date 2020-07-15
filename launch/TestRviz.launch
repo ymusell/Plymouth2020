@@ -1,0 +1,21 @@
+<launch>
+
+	<node pkg="rosserial_arduino" type="serial_node.py" name="serial_node" output="screen">
+		<param name="port" value="/dev/ttyACM0"/>
+		<param name="baud" value="115200"/>
+	</node>
+
+	<arg name="calibration" default="2" />
+	<param name="calibration_mode" type="int" value="$(arg calibration)" />
+
+	<node pkg="plymouth2020" type="gps.py" name="gps" />
+
+	<node name="imu" pkg="plymouth2020" type="imu.py" respawn="true" output='screen' />
+	<node name="filter_wind" pkg="plymouth2020" type="filter_wind.py" respawn="true" output='screen' />
+	
+	<node pkg="rostopic" type="rostopic" name="gps_origin" args="pub /launch_send_gps_origin geometry_msgs/Vector3 -- 50.695251 -4.236975 0" output="screen"/>
+	<node name="simulation" pkg="plymouth2020" type="simu_boat.py" respawn="true" output='screen' />
+	<node type="rviz" name="rviz" pkg="rviz" />
+	<node name="rviz_displayer" pkg="plymouth2020" type="rviz_displayer.py" args="--test" respawn="true" output='screen' />
+
+</launch>
