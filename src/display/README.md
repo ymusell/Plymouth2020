@@ -17,16 +17,38 @@ The launch to display this program is :
     roslaunch plymouth2020 fleet.launch 
 
 
-<!--  * `rviz_displayer_line_following.py`
+ * `rviz_displayer_line_following.py`
 
+The other programs needed to this python program are:
+	- `simu_boat.py`
+	- `lines_to_follow.py`
+	- `controler.py`
+	- and the `control_lib.py`  
+
+This program create a boat and 3 points to follow. With the line following algorithms, the boat follow the line.  
+All of it is printed on RViz.  
+The launch to use is the following:
+
+    roslaunch plymouth2020 line_following.launch 
 
 
  * `rviz_displayer_mission.py`
 
 
 
- * `rviz_displayer_station_keeping.py` -->
+ * `rviz_displayer_station_keeping.py`
 
+The other programs needed to this python program are:
+	- `simu_boat.py`
+	- `zone_to_stay.py`
+	- `controler_station_keeping.py`
+	- and the `control_lib.py`  
+
+This program create a boat and a zone to stay. With the line following algorithms, the boat follow the line to stay in an area.  
+All of it is printed on RViz.  
+The launch to use is the following:
+
+    roslaunch plymouth2020 station_keeping.launch 
 
 
 
