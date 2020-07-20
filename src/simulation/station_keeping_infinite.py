@@ -1,6 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import sys
+import rospkg
+rospack = rospkg.RosPack()
+pkg = rospack.get_path('plymouth2020')
+sys.path.append(pkg+'/src/my_libs')
 from roblib import *
 
 def get_thetabar(control_params,x,zone):
@@ -161,12 +166,12 @@ for t in np.arange(0,100,dt):
 	x_boat = x_boat + dt*xdot
 	draw_sailboat(x_boat,delta_s,u[0,0],psi,awind)
 	plt.plot(0,0,'r+')
-	plt.plot(res[0],res[1],'g+')
-	plt.plot(res[2],res[3],'b+')
-	plt.plot(res[4],res[5],'r+')
-	plt.plot(res[6],res[7],'y+')
-	plt.plot(res[8],res[9],'r+')
-	plt.plot(res[10],res[11],'y+')
+	plt.plot(res[0],res[1],'g+')	#x_or,y_or
+	plt.plot(res[2],res[3],'b+')	#x_ol,y_ol
+	plt.plot(res[4],res[5],'r+')	#x_ur,y_ur
+	plt.plot(res[6],res[7],'y+')	#x_dr,y_dr
+	plt.plot(res[8],res[9],'r+')	#x_ul,y_ul
+	plt.plot(res[10],res[11],'y+')	#x_dl,y_dl
 	plt.quiver(np.cos(psi),np.sin(psi))
 	plt.axis('equal')
 	plt.pause(0.01)

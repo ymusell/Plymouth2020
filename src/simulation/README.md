@@ -22,3 +22,7 @@ By taking into account this information, with the euler formula, we know where t
 This code will be used to test the controllers with a simulator, and to be able to see the boat with Rviz.  
 
 Warning: The initial position of the boat has to be defined before launching this program.
+
+## `station_keeping_infinite.py` :
+
+With this program, we can test the station keeping algorithm with the infinite strategy.
