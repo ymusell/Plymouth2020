@@ -1,0 +1,16 @@
+<launch>
+
+	<node name="mission" pkg="plymouth2020" type="mission.py" args="--test" output='screen' />
+		<arg name="simulation" default="1" />
+		<param name="simu" type="int" value="$(arg simulation)" />
+		<arg name="mission" default="mission.txt" />
+		<param name="mission" type="String" value="$(arg mission)" />
+		<arg name="m_mode" default="0" />
+		<param name="m_mode" type="int" value="$(arg m_mode)" />
+
+	<node name="simu_boat" pkg="plymouth2020" type="simu_boat.py" args="--test" respawn="true" output='screen' />
+
+	<node type="rviz" name="rviz_station_keeping" pkg="rviz" />
+	<node name="rviz_displayer_mission" pkg="plymouth2020" type="rviz_displayer_mission.py" args="--test" respawn="true" output='screen' />
+
+</launch>

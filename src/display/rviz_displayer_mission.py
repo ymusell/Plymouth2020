@@ -196,7 +196,7 @@ if __name__ == "__main__":
 		br_boat = tf.TransformBroadcaster()
 		br_boat.sendTransform((x, y, 0.0),quaternion_from_euler(roll,pitch,yaw),rospy.Time.now(),"boat","map")
 		br_wind = tf.TransformBroadcaster()
-		br_wind.sendTransform((x+2,y,0),(quaternion_from_euler(0,0,psi)),rospy.Time.now(),"wind","map")
+		br_wind.sendTransform((x,y,1.5),(quaternion_from_euler(0,0,psi)),rospy.Time.now(),"wind","map")
 		br_rudder = tf.TransformBroadcaster()
 		br_rudder.sendTransform((-0.5,0,0),(quaternion_from_euler(0,0,np.pi+dr)),rospy.Time.now(),"rudder","boat")
 		br_sail = tf.TransformBroadcaster()
