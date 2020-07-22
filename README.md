@@ -28,6 +28,6 @@ In this github, you will find :
 ### Other information
 This internship is the second time that student work on this boat. In 2019, other students from the ENSTA Bretagne worked on the boat, I used their work to continue the project.  
 So here are the link of their github for this project: 
-Alexandre Coujaud:	[link](https://github.com/AlexandreCourjaud/Stage2APlymouth "link to Alexandre's git")  
-Corentin Jegat:		[link](https://github.com/corentin-j/wrsc_plymouth_2019 "link to Corentin's git")  
-Mathieu Bouveron:	[link](https://github.com/Matthix7/plymouth_internship_2019 "link to Mathieu's git")  
+Alexandre Coujaud:	[click here](https://github.com/AlexandreCourjaud/Stage2APlymouth "link to Alexandre's git")  
+Corentin Jegat:		[click here](https://github.com/corentin-j/wrsc_plymouth_2019 "link to Corentin's git")  
+Mathieu Bouveron:	[click here](https://github.com/Matthix7/plymouth_internship_2019 "link to Mathieu's git")  

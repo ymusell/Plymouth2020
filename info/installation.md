@@ -37,11 +37,11 @@
 
   -  Firstly, you need to create the good path to search all the libraries for your arduino or to copy/paste all the libraries in the good file. In arduino, you can find and change the path in:
 
->File/Preferences/ and Sketchbook localisation:
+`File/Preferences/ and Sketchbook localisation:`
 
   -  In order to see if all the sensors work you can try all the .ino program in the file:
 
->/plymouth2020/src/components/sensorActuatorTest/
+`/plymouth2020/src/components/sensorActuatorTest/`
 
 
 # Installation of python package
