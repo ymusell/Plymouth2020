@@ -163,7 +163,6 @@ def control_station_keeping(thetabar,x,psi):
 	u = np.arctan(np.tan(0.5*(sawtooth(theta-thetabar)))) *1.5
 	u = max(u,-np.pi/4)
 	u = min(u,np.pi/4)
-	print(thetabar, theta)
 	deltamax = pi/4*(cos(psi-theta)+1)
 	u = np.array([[u],[deltamax]])
 	return u

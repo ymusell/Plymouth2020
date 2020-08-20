@@ -62,7 +62,7 @@ def sub_zone_to_stay(data): # Vector3
 	res = utm.from_latlon(data.x, data.y)
 	zone_to_stay[0] = -(lat_lon_origin[1][1]-res[1])
 	zone_to_stay[1] = (lat_lon_origin[1][0]-res[0])
-	print(zone_to_stay) # TODO
+	print(zone_to_stay) 
 
 
 ##############################################################################################

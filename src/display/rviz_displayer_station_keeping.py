@@ -150,7 +150,6 @@ if __name__ == "__main__":
 	node_name = 'rviz_displayer_line_following'
 	rospy.init_node(node_name)
 	rospy.Subscriber("simu_send_theta", Vector3, sub_euler_angles)
-	#rospy.Subscriber("simu_send_xy", Point, sub_xy)
 	rospy.Subscriber("simu_send_gps", GPSFix, sub_gps)
 	rospy.Subscriber("simu_send_wind_direction", Float32, sub_wind_direction)
 	rospy.Subscriber("simu_send_wind_force", Float32, sub_wind_force)

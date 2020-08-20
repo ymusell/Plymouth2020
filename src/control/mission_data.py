@@ -68,23 +68,15 @@ if __name__ == '__main__':
 
 	#####	Ros init 	##############################################
 
-	node_name = 'mission'
+	node_name = 'mission_data'
 	rospy.init_node(node_name)
-	simu = rospy.get_param('simu',0)
-	m_mode = rospy.get_param('m_mode',0)
 	mission_txt = rospy.get_param('mission',"mission.txt")
 	print(mission_txt)
 	rospy.Subscriber("launch_send_gps_origin", Vector3, sub_gps_origin)
-	if simu == 1:
-		rospy.Subscriber("simu_send_gps", GPSFix, sub_gps)
-		rospy.Subscriber("simu_send_wind_direction", Float32, sub_wind_direction)
-		rospy.Subscriber("simu_send_wind_force", Float32, sub_wind_force)
-		rospy.Subscriber("simu_send_theta", Vector3, sub_euler_angles)
-	else:
-		rospy.Subscriber("filter_send_gps", GPSFix, sub_gps)
-		rospy.Subscriber("filter_send_wind_direction", Float32, sub_wind_direction)
-		rospy.Subscriber("filter_send_wind_speed", Float32, sub_wind_force)
-		rospy.Subscriber("filter_send_euler_angles", Vector3, sub_euler_angles)
+	rospy.Subscriber("simu_send_gps", GPSFix, sub_gps)
+	rospy.Subscriber("simu_send_wind_direction", Float32, sub_wind_direction)
+	rospy.Subscriber("simu_send_wind_force", Float32, sub_wind_force)
+	rospy.Subscriber("simu_send_theta", Vector3, sub_euler_angles)
 
 
 	#####	Load mission table	######################################
@@ -137,33 +129,15 @@ if __name__ == '__main__':
 	pub_send_thetabar     = rospy.Publisher('control_send_thetabar', Float32, queue_size=10)
 	pub_send_line_begin   = rospy.Publisher('control_send_line_begin', Pose2D, queue_size=10)
 	pub_send_line_end     = rospy.Publisher('control_send_line_end', Pose2D, queue_size=10)
-	pub_send_zone_to_stay = rospy.Publisher('control_send_zone_to_stay', Vector3, queue_size=10)
 	u_rudder_msg = Float32()
 	u_sail_msg   = Float32()
 	thetabar_msg = Float32()
 	line_begin_msg = Pose2D()
 	line_end_msg   = Pose2D()
-	zone_to_stay_msg = Vector3()
 
 	#####	Trough mission table	##################################
 
 	for mission in mission_tab:
-		if mission[0] == 0:
-			rospy.loginfo("[{}] Cap following, thetabar={}".format(node_name,mission[1]))
-			t0 = rospy.get_time()
-			while (rospy.get_time() - t0) < mission[2] and (not rospy.is_shutdown()):
-				thetabar = mission[1]
-				theta = x[2,0]
-				u_rudder, u_sail = cl.control_cap_following(theta,thetabar,psi,2)
-
-				u_rudder_msg.data = u_rudder
-				u_sail_msg.data = u_sail
-				thetabar_msg.data = thetabar
-				pub_send_u_rudder.publish(u_rudder_msg)
-				pub_send_u_sail.publish(u_sail_msg)
-				pub_send_thetabar.publish(thetabar_msg)
-				rospy.sleep(0.2)
-
 		if mission[0] == 1:
 			rospy.loginfo("[{}] Line following between {},{} and {},{}".format(node_name,mission[1],mission[2],mission[3],mission[4]))
 
@@ -198,32 +172,5 @@ if __name__ == '__main__':
 				pub_send_u_sail.publish(u_sail_msg)
 				pub_send_thetabar.publish(thetabar_msg)
 				rospy.sleep(0.2)
-
-		if mission[0] == 2:
-			rospy.loginfo("[{}] Station keeping around {},{}".format(node_name,mission[1],mission[2]))
-			zone_to_stay_msg.x, zone_to_stay_msg.y = mission[1], mission[2]
-			for i in range(5):
-				pub_send_zone_to_stay.publish(zone_to_stay_msg)
-				rospy.sleep(0.1)
-			res = utm.from_latlon(mission[1], mission[2])
-			px = -(lat_lon_origin[1][1]-res[1])
-			py = (lat_lon_origin[1][0]-res[0])
-			params = [px,py,psi,4,2]
-			zone = 1
-
-			t0 = rospy.get_time()
-			while (rospy.get_time() - t0) < mission[3] and (not rospy.is_shutdown()):
-
-				thetabar,zone,displat = cl.get_thetabar_station_keeping(params,x,zone,m_mode)
-				u_rudder,u_sail = cl.control(x[2,0],thetabar,psi,2)
-
-				u_rudder_msg.data = u_rudder
-				u_sail_msg.data = u_sail
-				thetabar_msg.data = thetabar
-				pub_send_u_rudder.publish(u_rudder_msg)
-				pub_send_u_sail.publish(u_sail_msg)
-				pub_send_thetabar.publish(thetabar_msg)
-				rospy.sleep(0.2)
-
 
 

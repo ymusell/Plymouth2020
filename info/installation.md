@@ -49,3 +49,10 @@
 For the utm reading part:
 
     pip install utm 
+
+
+# Warning
+
+### Initialisation of the RViz visualization 
+
+For RViz, the addition of the good markers need to be done manually.

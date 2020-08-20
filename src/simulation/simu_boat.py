@@ -8,6 +8,7 @@ import utm
 import rospy
 from std_msgs.msg import Float32
 from geometry_msgs.msg import Vector3
+from std_msgs.msg import Bool
 from gps_common.msg import GPSFix
 
 lat_lon_origin = [[],[]]
@@ -28,6 +29,10 @@ def sub_gps_origin(data):
     global lat_lon_origin
     lat_lon_origin[0] = [data.x, data.y]
     lat_lon_origin[1] = utm.from_latlon(data.x, data.y)
+
+def sub_reset(data):
+    global reset
+    reset = data.data
 
 ##############################################################################################
 #      Euler integration
@@ -66,11 +71,12 @@ if __name__ == '__main__':
     # --- Boat variables --- #
 
     p0,p1,p2,p3,p4,p5,p6,p7,p8,p9 = 0.03,40,6000,200,1500,0.5,0.5,2,300,400 #0.1,0.1,0.5,3,1,0,0,0.5,10,1 #0.1,1,6000,1000,2000,1,1,2,300,10000
-    x = np.array([[0,0,0,1,0]]).T #x=(x,y,theta,v,w)
-    dt = 0.01
+    x = np.array([[0,0,np.pi,1,0]]).T #x=(x,y,theta,v,w)
+    dt = 0.1   #0.01
     pi = np.pi
     awind,psi = 2,-1 #2,-2
     u = [0,0]
+    reset = False   #In order to reset the map
 
     # --- ROS -------------- #
 
@@ -87,6 +93,7 @@ if __name__ == '__main__':
     rospy.Subscriber("control_send_u_rudder", Float32, sub_u_rudder)
     rospy.Subscriber("control_send_u_sail", Float32, sub_u_sail)
     rospy.Subscriber("launch_send_gps_origin", Vector3, sub_gps_origin)
+    rospy.Subscriber("reset_map", Bool, sub_reset)
     # <node pkg="rostopic" type="rostopic" name="gps_origin" args="pub /launch_send_gps_origin geometry_msgs/Vector3 -- 50.695251 -4.236975 0" output="screen"/>
     # To define or to change in the good launch
     node_name = 'simu_boat'
@@ -101,7 +108,9 @@ if __name__ == '__main__':
     rospy.loginfo("[{}] Got GPS origin {}".format(node_name,lat_lon_origin))
 
     while not rospy.is_shutdown():
-
+        if reset == True:
+            x = np.array([[0,0,np.pi,1,0]]).T #x=(x,y,theta,v,w)
+            reset = False
         xdot,delta_s = f(x,u)
         x = x + dt*xdot
         #rospy.loginfo("[{}] x : {}, y:{}".format(node_name,x[0,0],x[1,0]))

@@ -207,5 +207,5 @@ if __name__ == "__main__":
 		br_zone.sendTransform((zone_to_stay[0],zone_to_stay[1],0),(quaternion_from_euler(0,0,0)),rospy.Time.now(),"zone","map")
 		br_thetabar = tf.TransformBroadcaster()
 		br_thetabar.sendTransform((x,y,0),(quaternion_from_euler(0,0,thetabar)),rospy.Time.now(),"thetabar","map")
-
+		print("pline[0],pline[1]:",pline[0],pline[1])
 		marker_line.set_points(pline[0],pline[1])
