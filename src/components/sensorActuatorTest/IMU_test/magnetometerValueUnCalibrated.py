@@ -18,9 +18,9 @@ mY = np.array(magy)
 mZ = np.array(magz)
  
 fig = plt.figure()
-plt.suptitle('Before/After calibration values of the IMU', size = 'x-large')
+plt.suptitle('avant/Après la calibration des valeurs de IMU', size = 'x-large')
 ax = fig.add_subplot(111, projection='3d')
-ax.plot(mX, mY, mZ,label='before the calibration')
+ax.plot(mX, mY, mZ,label='avant calibration')
 
 # After the second type of calibration, with the .exe Magneto 1.2, to see the README.md
 listA = [[1.013172,-0.000964,-0.006329],[-0.000964,1.024569,0.006336],[-0.006329,0.006336,0.974003]]
@@ -39,13 +39,13 @@ arrayNewMX = np.array(newMX)
 arrayNewMY = np.array(newMY)
 arrayNewMZ = np.array(newMZ)
 
-ax.plot(arrayNewMX, arrayNewMY, arrayNewMZ,'ro',label='After the calibration')
-ax.set_xlabel('magnet_X')
-ax.set_ylabel('magnet_Y')
-ax.set_zlabel('magnet_Z')
+ax.plot(arrayNewMX, arrayNewMY, arrayNewMZ,'ro',label='Après la calibration')
+ax.set_xlabel('magnetisme_X')
+ax.set_ylabel('magnetisme_Y')
+ax.set_zlabel('magnetisme_Z')
 ax.set_xlim(-20, 20)
 ax.set_ylim(-20, 20)
-ax.set_zlim(-20, 20)
+ax.set_zlim(-30, 25)
 ax.legend()
 
 plt.show()

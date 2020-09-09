@@ -77,7 +77,7 @@ def zone_boat(zone_position, wind_direction, boat_position):
 	"""
 	vect_boat = np.array([boat_position[0]-zone_position[0],boat_position[1]-zone_position[1]])
 	theta_proj = np.arccos(vect_boat[1]/np.linalg.norm(vect_boat))
-	angle_boat_wind = wind_direction -theta_proj
+	angle_boat_wind = wind_direction - theta_proj
 	if angle_boat_wind<0:
 		angle_boat_wind += 2*np.pi
 	angle = int(angle_boat_wind/(2*np.pi/nbr_of_angle_part))
@@ -135,8 +135,8 @@ u = [0,0]
 ###### Machine learning part ############################
 learning_rate = 0.85
 actualization_rate = 0.99
-nbr_episodes = 500	#5000
-ending_time = 25	# 10 sec of sail
+nbr_episodes = 100	#5000
+ending_time = 25	# 25 sec of sail
 range_of_ray = 1   	# 1 meter
 nb_ray = 20 	# 20 range of ray
 nbr_of_angle_part = 8  # The map is devided in 8 parts
@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
 	##### Definition of the map/table for the Q-learning ##############
 	if (calibration_matrix == 1):
-		Q_table = np.zeros((nbr_of_angle_part, nb_ray,8), dtype='f') # 8 is the nbr of diractions avalaibles
+		Q_table = np.zeros((nbr_of_angle_part, nb_ray,8), dtype='f') # 8 is the nbr of directions avalaibles
 		# saving the matrix
 		f1 = h5py.File(sys.path[0]+'/data/station_keeping_Qlearning.hdf5', "w")
 		dset = f1.create_dataset("data", (nbr_of_angle_part, nb_ray,8), dtype='i', data=Q_table)
@@ -214,10 +214,9 @@ if __name__ == '__main__':
 					thetabar,act = chose_action(epsilon, new_ray, new_angle, Q_table)
 					# Update the Q-table
 					reward = rewards(prev_zone, new_zone, act)
-					# print("reward",reward)
 					Q_table[prev_angle,prev_ray,act] = Q_table[prev_angle,prev_ray,act] + learning_rate*((reward+actualization_rate*(np.argmax(Q_table[new_angle,new_ray,:])))-Q_table[prev_angle,prev_ray,act])
 				u = cl.control_station_keeping(thetabar,fut_x,psi)	
-				rospy.loginfo(" Zone {}, ray de {}, angle de {}".format(new_zone,new_ray,new_angle))
+				# rospy.loginfo(" Zone {}, ray de {}, angle de {}".format(new_zone,new_ray,new_angle))
 				
 				prev_zone,prev_ray,prev_angle = new_zone,new_ray,new_angle
 				u_rudder_msg.data = u[0,0]
@@ -229,6 +228,7 @@ if __name__ == '__main__':
 					reset_msg.data = False
 				rate.sleep()
 			nbr_ite+=1
-			rospy.loginfo("Iteration nbr {}".format(nbr_ite))
+			rospy.loginfo("Iteration nbr {}/{}".format(nbr_ite,nbr_episodes))
 		save_data(Q_table)
+		rospy.loginfo("End of the training")
 

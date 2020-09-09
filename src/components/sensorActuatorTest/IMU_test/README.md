@@ -10,8 +10,8 @@ There are to types of calibration, the first one where we only consider the hard
 
 
 To use this program, you have to lauch the sensorCalibration launch
-but before, you have to change the "?" in the line <arg name="calibration" default="?" />  in the launch.  
-Values of the ? =  
+but before, you have to change the "?" in the line `<arg name="calibration" default="?" />`  in the launch.  
+Values of the "calibration" is equal to :  
 * 0 : The program 	will use the previous calibration by considering only the hard iron distortion.  
 * 1 : The program will calibrate the IMU, you have to follow the instruction on screen.  
 * 2 : The program will use the previous calibration by considering the hard and soft iron distortion. Then you will have to launch the Magneto 1.2 that you can find [here](http://sailboatinstruments.blogspot.com/2011/09/improved-magnetometer-calibration-part.html "Magneto 1.2"). And you need to change the values of the offset in the imu.py file that gave you Magneto 1.2.  
