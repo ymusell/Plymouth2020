@@ -1,8 +1,9 @@
 # Prerequisites 
 
   -  First of all you need to download arduino IDE [click here](https://www.arduino.cc/en/Main/Software "Download Arduino IDE")  
+  -  If the Rasberry Pi doesn't have ubuntu, install it, [here is the procedure](https://ubuntu-mate.org/ports/raspberry-pi/ "Download ubuntu")  
   -  You need to install ROS on your Raspberry Pi 3 
-  -  You maybe will have to enable the port use and to add your user to the group, then type:  
+  -  You may have to enable the port use and to add your user to the group, then type:  
 
 
     ls -l /dev/ttyACM*

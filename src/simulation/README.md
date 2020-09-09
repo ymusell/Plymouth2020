@@ -1,4 +1,6 @@
 # The simulation part
+  
+The simulation will display the boat on matplotlib.
 
 
 #### `command_sailboat.py` : 

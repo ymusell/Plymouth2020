@@ -17,3 +17,6 @@ Here is a small summary of all the major steps made to advance the project:
   -  Then the RViz display part was created for a better view of the boat  
   -  With Rviz, the line following and station keeping algorithm were implemented  
   -  For the creation of a more complexe algorithm the update of some knowledge was needed  
+  -  Using a linear regression to copy the behavior af the line following algorithm was thought.  
+  -  But since the boat need to learn by itself to sail, reinforcement learning was needed. Policy gradient, Q-learning and neurone network algorithm were studied. Finally, the Q-learning was choosen.  
+  -  Implementation of the Q-learning algorithm.  

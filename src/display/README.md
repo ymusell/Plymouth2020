@@ -1,6 +1,6 @@
 # Display part
 
-This part is for the display of the algorithm on Rviz. The programs present are : 
+This part is to display the algorithm on Rviz. The programs present are : 
 
 #### `rviz_displayer.py`
 
