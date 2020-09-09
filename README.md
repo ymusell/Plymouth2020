@@ -1,7 +1,8 @@
-[![Current version on Arduino](https://img.shields.io/badge/Arduino-v1.8.5-blue.svg)](https://www.arduino.cc/en/Main/Software) 
+[![Current version on Arduino](https://img.shields.io/badge/Arduino-v1.8.5-blue.svg)](https://www.arduino.cc/en/Main/Software)
+
 
 # Plymouth2020
-Internship of 2020 on an autonomous sailboat of the University of Plymouth
+Internship of 2020 on an autonomous sailboat of the University of Plymouth.
 
 
 ## The project
@@ -20,9 +21,11 @@ To acquire the data, we use an *arduino Mega* and to control the boat, we use a 
 
 ## Summary
 In this github, you will find :
-* simple tests for each sensors (__components__)
-* simple algorithm like line following or station keeping (__simpleAlgorithm__)
-* and the workspace for the autonomous algorithm and all the other algorithms (__autonomousNavigation__)
+* Useful information about the setup and the organisation of the project in the file `/info`  
+* Simple tests for each sensors (__components__)
+* Simple algorithm like line following or station keeping (__simpleAlgorithm__)
+* The workspace for the autonomous algorithm (__autonomousNavigation__)  
+* The possibility to visualize the boat with matplolib and Rviz in (__simulation__) and (__display__) respectively.  
 
 
 ### Other information
